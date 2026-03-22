@@ -1,0 +1,37 @@
+{
+  "name": "ai-dev-team-labs",
+  "version": "0.1.0",
+  "description": "GitLab Duo Agent Platform - Onboarding Copilot for automated contributor onboarding",
+  "main": "backend/server.js",
+  "scripts": {
+    "dev": "node backend/server.js",
+    "cli": "node cli/orchestrator.js",
+    "migrate": "prisma migrate dev",
+    "studio": "prisma studio",
+    "start": "NODE_ENV=production node backend/server.js"
+  },
+  "keywords": [
+    "gitlab",
+    "agents",
+    "onboarding",
+    "ai",
+    "claude"
+  ],
+  "author": "AI Dev Team",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "dotenv": "^16.3.1",
+    "@prisma/client": "^5.7.0",
+    "axios": "^1.6.2",
+    "chalk": "^4.1.2",
+    "@anthropic-ai/sdk": "^0.15.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.7.0",
+    "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
