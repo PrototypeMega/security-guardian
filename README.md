@@ -11,16 +11,38 @@ cd AI-Dev-Team-Labs
 npm install
 ```
 
-### 2. Configure Environment
+### 2. Get API Credentials
+
+**GitLab Personal Access Token:**
+1. Go to https://gitlab.com/-/user_settings/personal_access_tokens
+2. Click "Add new token"
+3. Name: "AI Dev Team Labs"
+4. Scopes: ✓ `api`, ✓ `read_repository`, ✓ `write_repository`
+5. Copy the token
+
+**Claude API Key:**
+1. Go to https://console.anthropic.com/account/keys
+2. Click "Create Key"
+3. Copy the key (starts with `sk-ant-`)
+
+### 3. Configure Environment
 ```bash
 cp .env.example .env
-# Edit .env with your GitLab token and Claude API key:
-# - GITLAB_API_TOKEN: Your GitLab personal access token
-# - CLAUDE_API_KEY: Your Anthropic Claude API key
-# - GITLAB_WEBHOOK_SECRET: A random secret for webhook validation
 ```
 
-### 3. Start the System
+Edit `.env` with your credentials:
+```bash
+GITLAB_API_TOKEN=glpat-your-token-here
+CLAUDE_API_KEY=sk-ant-your-key-here
+GITLAB_WEBHOOK_SECRET=my-random-webhook-secret
+```
+
+### 4. Initialize Database
+```bash
+npm run migrate
+```
+
+### 5. Start the System
 ```bash
 # Terminal 1: Start webhook server
 npm run dev
@@ -29,15 +51,42 @@ npm run dev
 npm run cli
 ```
 
-### 4. Test Webhook
+### 6. Configure GitLab Webhook (Optional but Recommended)
+
+To test with real events:
+
+1. Create a test repository in GitLab
+2. Go to **Settings → Webhooks**
+3. Add webhook with:
+   - **URL:** `http://localhost:3000/webhooks/gitlab` (or your server URL)
+   - **Secret token:** Same as `GITLAB_WEBHOOK_SECRET` in `.env`
+   - **Events:** ✓ Push events
+4. Click "Add webhook"
+
+### 7. Test the System
+
+**Option A: Manual Webhook (No real GitLab repo needed)**
 ```bash
 curl -X POST http://localhost:3000/webhooks/gitlab \
   -H "Content-Type: application/json" \
-  -H "X-Gitlab-Token: test-webhook-secret" \
-  -d '{"object_kind":"push","project":{"id":1,"name":"test-repo"},"user_username":"test-user"}'
+  -H "X-Gitlab-Token: my-random-webhook-secret" \
+  -d '{
+    "object_kind": "push",
+    "project": {
+      "id": 123,
+      "name": "test-repo",
+      "path": "test-repo"
+    },
+    "user_username": "test-user"
+  }'
 ```
 
-Expected response: `202 Accepted` with event ID.
+**Option B: Real GitLab Event**
+- Push code to your test repo
+- Watch the CLI show "Event received → Processing → Complete"
+- Check your repo's Issues tab for the generated onboarding guide
+
+Expected webhook response: `202 Accepted`
 
 ## Architecture
 
@@ -71,20 +120,24 @@ GitLab Push Event
 - [x] Health check endpoint
 - [x] Manual webhook testing
 
-### 🔨 Phase 2: Agent Core (IN PROGRESS)
-- [ ] GitLab API client (read repo structure)
-- [ ] Repo analyzer (detect tech stack)
-- [ ] Claude API integration
-- [ ] Onboarding agent implementation
-- [ ] Unit tests
+### ✅ Phase 2: Agent Core (COMPLETE)
+- [x] GitLab API client (read repo structure, create issues)
+- [x] Repo analyzer (detect tech stack, languages, project type, tests)
+- [x] Claude API integration with structured prompts
+- [x] Onboarding Copilot agent (full pipeline)
+- [x] Unit tests with mock data
+- [x] Agent integration into orchestrator
 
-### 🏗️ Phase 3: Integration
-- [ ] Real GitLab event triggering
-- [ ] End-to-end testing
+### 🔨 Phase 3: Integration & Testing (IN PROGRESS)
+- [x] Agent code complete
+- [ ] Real GitLab event triggering (needs your credentials)
+- [ ] End-to-end testing with real repo
 - [ ] Error handling + retries
+- [ ] Test with provided credentials
 
-### 📹 Phase 4: Demo & Polish
-- [ ] Comprehensive README
+### 📹 Phase 4: Demo & Polish (UPCOMING)
+- [x] README with setup instructions
+- [ ] Edge case handling
 - [ ] 3-minute demo video
 - [ ] Production-ready code
 
@@ -146,21 +199,40 @@ DATABASE_URL=file:./.db/dev.sqlite
 
 ## Testing
 
-### Health Check
+### Run Agent Tests (No API Keys Required)
+```bash
+node __tests__/agent-test.js
+```
+
+This tests:
+- Repository analyzer (tech stack detection)
+- Claude API integration (if API key configured)
+- GitLab API integration (if token configured)
+
+### Health Check Endpoint
 ```bash
 curl http://localhost:3000/health
 ```
 
-### List Recent Events
-```bash
-curl http://localhost:3000/events
+Response:
+```json
+{
+  "status": "ok",
+  "timestamp": "2024-03-22T21:15:00.000Z",
+  "uptime": 125.45
+}
 ```
 
-### Trigger Test Webhook
+### List Recent Events
+```bash
+curl http://localhost:3000/events?limit=10
+```
+
+### Trigger Test Webhook (without real GitLab)
 ```bash
 curl -X POST http://localhost:3000/webhooks/gitlab \
   -H "Content-Type: application/json" \
-  -H "X-Gitlab-Token: test-webhook-secret" \
+  -H "X-Gitlab-Token: my-random-webhook-secret" \
   -d '{
     "object_kind": "push",
     "project": {
@@ -171,6 +243,16 @@ curl -X POST http://localhost:3000/webhooks/gitlab \
     "user_username": "test-user"
   }'
 ```
+
+Watch the orchestrator CLI output for processing.
+
+### Full End-to-End Flow
+
+1. **Terminal 1**: `npm run dev` (start webhook server)
+2. **Terminal 2**: `npm run cli` (start orchestrator)
+3. **Terminal 3**: Push to your test GitLab repo, or use curl webhook above
+4. **Watch Terminal 2**: See agent processing in real-time
+5. **Check GitLab**: New issue should appear in your test repo
 
 ## Database
 
@@ -192,34 +274,176 @@ Opens Prisma Studio at http://localhost:5555
 ## Troubleshooting
 
 ### Server won't start
-- Check `.env` file exists and `DATABASE_URL` is set
-- Ensure port 3000 is not in use: `lsof -i :3000` (macOS/Linux)
+```bash
+Error: EADDRINUSE: address already in use :::3000
+```
+- Port 3000 is already in use
+- Change PORT in .env or kill process: `kill $(lsof -t -i :3000)` (macOS/Linux)
+
+### Database connection error
+```bash
+Error: DATABASE_URL not found
+```
+- Ensure `.env` file exists with `DATABASE_URL=file:./.db/dev.sqlite`
+- Run migrations: `npm run migrate`
 
 ### Webhook signature validation fails
-- Verify `X-Gitlab-Token` header matches `GITLAB_WEBHOOK_SECRET` in `.env`
-- Check that you're POSTing raw JSON (not form data)
+```bash
+"Invalid signature" response
+```
+- Verify `X-Gitlab-Token` header in curl matches `GITLAB_WEBHOOK_SECRET` in `.env`
+- Ensure you're POSTing raw JSON (not form data)
+- Signature must be HMAC-SHA256 of request body
+
+### Claude API errors
+```bash
+Error: 401 Invalid API key
+```
+- Check `CLAUDE_API_KEY` in `.env` (should start with `sk-ant-`)
+- Verify key is valid at https://console.anthropic.com/account/keys
+- Ensure it hasn't been revoked
+
+### GitLab API errors
+```bash
+Error: 401 Unauthorized
+```
+- Check `GITLAB_API_TOKEN` in `.env`
+- Token must have scopes: `api`, `read_repository`, `write_repository`
+- Verify at https://gitlab.com/-/user_settings/personal_access_tokens
 
 ### Database is locked
+```bash
+database disk image is malformed
+```
 - Stop all processes (server + orchestrator)
-- Delete `.db/dev.sqlite*` files (will be recreated on next run)
+- Delete `.db/` directory: `rm -rf .db/`
+- Run migrations again: `npm run migrate`
+- Restart server
 
-## Next Steps
+### Agent times out on large repositories
+- Agent has 10-second timeout per API call
+- Large repos (>10,000 files) may need adjustment
+- Edit timeout in `backend/lib/gitlab-client.js` if needed
 
-1. Implement Phase 2: Agent Core
-   - Create GitLab API client
-   - Implement repo analyzer
-   - Add Claude integration
-   - Build onboarding agent
+### No debug output in orchestrator
+- Check `LOG_LEVEL=debug` in `.env`
+- Ensure terminal scrollback has space (large outputs get cut off)
+- Look at database with `npm run studio` to verify events were queued
 
-2. Implement Phase 3: Integration
-   - Connect webhook → agent → GitLab
-   - Handle real events
-   - Add error handling
+## How It Works (Complete Flow)
 
-3. Phase 4: Demo & Polish
-   - Document usage
-   - Record demo video
-   - Clean up code
+### Detailed Execution Pipeline
+
+**1. Event Triggers (GitLab)**
+```
+git push origin main
+↓
+GitLab sends webhook POST to http://localhost:3000/webhooks/gitlab
+```
+
+**2. Webhook Ingestion (Server)**
+```
+Webhook received
+↓
+Validate HMAC-SHA256 signature with GITLAB_WEBHOOK_SECRET
+↓
+Parse: project_id, event_type, user_username, commit info
+↓
+Store event in SQLite with status="queued"
+↓
+Return 202 Accepted immediately (async processing)
+```
+
+**3. Event Processing (Orchestrator CLI)**
+```
+Poll database every 5 seconds for queued events
+↓
+Found events → Update status to "processing"
+↓
+Route to appropriate agent (currently: onboarding-copilot for push events)
+```
+
+**4. Agent Execution (Onboarding Copilot)**
+```
+Fetch repository from GitLab API:
+  • File tree/structure
+  • README.md
+  • package.json (or language-specific config)
+  • Project metadata
+
+Analyze repository:
+  • Detect primary languages
+  • Identify tech stack
+  • Determine project type
+  • Find tests/CI/CD setup
+  • Extract key directories
+
+Call Claude API with:
+  • Repository analysis
+  • Markdown generation instructions
+  • Request for starter issues
+
+Receive JSON with:
+  {
+    "guide": "# Welcome! 🚀\n...",
+    "starterIssues": [...]
+  }
+
+Post to GitLab:
+  • Create new issue
+  • Include guide + starter issues
+  • Add project metadata
+  • Tag with labels
+
+Record in database:
+  • Agent execution details
+  • Success/failure status
+  • Tokens used
+  • Execution time
+```
+
+**5. Output (GitLab Issue)**
+```
+New issue appears in repository with:
+  ✅ 5-step onboarding checklist
+  ✅ Repository structure explanation
+  ✅ Technology stack & key files
+  ✅ 3-5 beginner-friendly starter issues
+  ✅ Testing & development setup
+  ✅ Project metadata
+```
+
+## Next Steps (Complete Phase 3 & 4)
+
+**Phase 3: Real-World Integration** (Complete Today)
+1. Get API credentials:
+   - Claude API key from https://console.anthropic.com/account/keys
+   - GitLab token from https://gitlab.com/-/user_settings/personal_access_tokens
+2. Update `.env` with credentials
+3. Create test repository in GitLab
+4. Configure webhook in GitLab repo settings
+5. Test end-to-end:
+   ```bash
+   npm run dev &  # Terminal 1
+   npm run cli &  # Terminal 2
+   git push origin main  # Terminal 3: Push to test repo
+   ```
+6. Verify new issue appears in GitLab
+7. Handle any errors (see Troubleshooting)
+
+**Phase 4: Demo & Polish** (Complete Tomorrow)
+1. Record 3-minute demo video:
+   - Show code structure (15 sec)
+   - Start server + CLI (15 sec)
+   - Show GitLab test repo (30 sec)
+   - Trigger webhook/push (15 sec)
+   - Show CLI logs processing (30 sec)
+   - Show final GitLab issue (45 sec)
+   - Explain impact (30 sec)
+2. Improve error messages & logging
+3. Edge case handling (missing files, rate limits, etc.)
+4. Final README polish
+5. Prepare for hackathon submission
 
 ## Contributors
 
