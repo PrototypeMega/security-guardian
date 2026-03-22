@@ -1,135 +1,123 @@
 require('dotenv').config();
 const express = require('express');
-const { PrismaClient } = require('@prisma/client');
+const crypto = require('crypto');
 const chalk = require('chalk');
-const { validateGitlabSignature } = require('./middleware/validators');
+const { PrismaClient } = require('@prisma/client');
 
 const app = express();
 const prisma = new PrismaClient();
+const PORT = process.env.PORT || 3000;
+const WEBHOOK_SECRET = process.env.GITLAB_WEBHOOK_SECRET || 'test-secret';
 
 // Middleware
 app.use(express.json());
 
-// Constants
-const PORT = process.env.PORT || 3000;
-const WEBHOOK_SECRET = process.env.GITLAB_WEBHOOK_SECRET;
-
-/**
- * Health check endpoint
- */
+// Health check endpoint
 app.get('/health', (req, res) => {
-  res.status(200).json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime()
-  });
+  res.status(200).json({ status: 'healthy', timestamp: new Date().toISOString() });
 });
 
-/**
- * GitLab Webhook endpoint
- * Receives push/merge_request/issue events from GitLab
- * Validates signature and stores event for async processing
- */
-app.post('/webhooks/gitlab', async (req, res) => {
+// Webhook signature validation middleware
+function validateGitlabSignature(req, res, next) {
+  const signature = req.headers['x-gitlab-token'];
+  
+  if (!signature) {
+    return res.status(401).json({ error: 'Missing X-Gitlab-Token header' });
+  }
+
+  if (signature !== WEBHOOK_SECRET) {
+    return res.status(401).json({ error: 'Invalid webhook signature' });
+  }
+
+  next();
+}
+
+// Main webhook endpoint
+app.post('/webhooks/gitlab', validateGitlabSignature, async (req, res) => {
   try {
-    // 1. Validate webhook signature
-    const signature = req.headers['x-gitlab-token'];
-    const rawBody = JSON.stringify(req.body);
+    const { project_id, event_name, ref } = req.body;
 
-    if (!validateGitlabSignature(rawBody, WEBHOOK_SECRET, signature)) {
-      console.warn(chalk.yellow('[WEBHOOK] Invalid signature - rejecting event'));
-      return res.status(401).json({ error: 'Invalid signature' });
+    console.log(chalk.blue(`\n📨 Webhook received:`));
+    console.log(chalk.gray(`   Event: ${event_name}`));
+    console.log(chalk.gray(`   Project ID: ${project_id}`));
+    console.log(chalk.gray(`   Ref: ${ref}`));
+
+    // Only process push events
+    if (event_name !== 'push') {
+      console.log(chalk.yellow(`⚠️  Ignoring non-push event: ${event_name}`));
+      return res.status(202).json({ message: 'Event received but ignored (not a push event)' });
     }
 
-    // 2. Extract event metadata
-    const { object_kind, project, user_username, push_data } = req.body;
-
-    if (!object_kind || !project) {
-      return res.status(400).json({ error: 'Missing required fields' });
-    }
-
-    // 3. Store event in database for async processing
+    // Create event in database
     const event = await prisma.event.create({
       data: {
-        event_type: object_kind, // 'push', 'merge_request', 'issue'
-        project_id: project.id,
-        project_name: project.name || project.path || 'unknown',
+        event_type: event_name,
+        project_id: project_id || 0,
         payload: JSON.stringify(req.body),
         status: 'queued'
       }
     });
 
-    console.log(
-      chalk.green('[WEBHOOK] ✓ Event received'),
-      `(${object_kind} on ${project.name})`
-    );
-    console.log(chalk.gray(`  Event ID: ${event.id}`));
+    console.log(chalk.green(`✓ Event queued with ID: ${event.id}`));
 
-    // 4. Return 202 Accepted immediately (async processing)
-    return res.status(202).json({
-      status: 'queued',
-      event_id: event.id,
-      message: 'Event queued for processing'
+    // Return 202 Accepted immediately (async processing)
+    res.status(202).json({
+      message: 'Event received and queued for processing',
+      event_id: event.id
     });
+
   } catch (error) {
-    console.error(chalk.red('[WEBHOOK] ✗ Error:'), error.message);
+    console.error(chalk.red(`✗ Error processing webhook: ${error.message}`));
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-/**
- * Debug endpoint: List recent events
- */
-app.get('/events', async (req, res) => {
+// Get event status endpoint
+app.get('/events/:id', async (req, res) => {
   try {
-    const limit = parseInt(req.query.limit) || 10;
-    const events = await prisma.event.findMany({
-      take: limit,
-      orderBy: { created_at: 'desc' },
+    const event = await prisma.event.findUnique({
+      where: { id: parseInt(req.params.id) },
       include: { agentRuns: true }
     });
 
-    res.json({
-      count: events.length,
-      events: events
-    });
+    if (!event) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    res.status(200).json(event);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-/**
- * Start server
- */
-async function startServer() {
+// Get all events
+app.get('/events', async (req, res) => {
   try {
-    // Verify database connection
-    await prisma.$queryRaw`SELECT 1`;
-    console.log(chalk.green('✓ Database connected'));
-
-    // Start listening
-    app.listen(PORT, () => {
-      console.log(chalk.blue.bold('\n🚀 AI Dev Team Labs - Webhook Server\n'));
-      console.log(`Listening on ${chalk.cyan(`http://localhost:${PORT}`)}`);
-      console.log(`Webhook endpoint: ${chalk.cyan(`POST /webhooks/gitlab`)}`);
-      console.log(`Health check: ${chalk.cyan(`GET /health`)}`);
-      console.log(`Events list: ${chalk.cyan(`GET /events`)}`);
-      console.log(chalk.gray('\nCtrl+C to stop\n'));
+    const events = await prisma.event.findMany({
+      include: { agentRuns: true },
+      orderBy: { created_at: 'desc' },
+      take: 20
     });
-  } catch (error) {
-    console.error(chalk.red('✗ Failed to start server:'), error.message);
-    process.exit(1);
-  }
-}
 
-/**
- * Graceful shutdown
- */
+    res.status(200).json(events);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Start server
+app.listen(PORT, () => {
+  console.log(chalk.cyan.bold(`\n🚀 AI Dev Team Labs - Webhook Server`));
+  console.log(chalk.gray(`Listening on http://localhost:${PORT}`));
+  console.log(chalk.gray(`Webhook endpoint: POST http://localhost:${PORT}/webhooks/gitlab`));
+  console.log(chalk.gray(`Health check: GET http://localhost:${PORT}/health`));
+  console.log(chalk.gray(`View events: GET http://localhost:${PORT}/events`));
+  console.log(chalk.yellow(`\n⚠️  Make sure .env is configured with GITLAB_WEBHOOK_SECRET\n`));
+});
+
+// Graceful shutdown
 process.on('SIGINT', async () => {
-  console.log(chalk.yellow('\n\nShutting down gracefully...\n'));
+  console.log(chalk.yellow('\n\nShutting down...'));
   await prisma.$disconnect();
   process.exit(0);
 });
-
-// Start the server
-startServer();

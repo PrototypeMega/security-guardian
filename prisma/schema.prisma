@@ -1,57 +1,45 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
-}
-
 model Event {
-  id         Int      @id @default(autoincrement())
-  event_type String   // 'push', 'merge_request', 'issue'
+  id         Int    @id @default(autoincrement())
+  event_type String // 'push'
   project_id Int
-  project_name String
-  payload    String   // JSON string
-  status     String   @default("queued") // queued, processing, complete, failed
-  error      String?
+  payload    String // JSON string
+  status     String @default("queued") // queued, processing, complete, failed
   created_at DateTime @default(now())
-  processed_at DateTime?
+  updated_at DateTime @updatedAt
 
   agentRuns AgentRun[]
-
-  @@index([status])
-  @@index([created_at])
 }
 
 model AgentRun {
-  id         Int      @id @default(autoincrement())
-  event_id   Int
-  agent_name String   // 'onboarding-copilot'
-  status     String   // 'success', 'failed'
-  input      String   // JSON string
-  output     String?  // JSON string
-  error      String?
-  duration_ms Int      @default(0)
-  created_at DateTime @default(now())
+  id          Int    @id @default(autoincrement())
+  event_id    Int
+  agent_name  String // 'onboarding-copilot'
+  status      String
+  output      String? // JSON string
+  error_message String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
 
   event Event @relation(fields: [event_id], references: [id], onDelete: Cascade)
-
-  @@index([agent_name])
-  @@index([status])
 }
 
 model OnboardingGuide {
-  id              String   @id @default(cuid())
-  project_id      Int
-  project_name    String
-  guide_content   String   // Markdown
-  starter_issues  String   // JSON string - Array of {title, description, labels}
-  gitlab_issue_url String?
-  created_at      DateTime @default(now())
-
-  @@index([project_id])
+  id                String @id @default(cuid())
+  project_id        Int
+  guide_content     String // Markdown
+  starter_issues    String // JSON string
+  gitlab_issue_url  String?
+  created_at        DateTime @default(now())
 }
