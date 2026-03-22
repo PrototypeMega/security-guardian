@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "node backend/server.js",
     "cli": "node cli/orchestrator.js",
+    "test": "node backend/test-fixture.js",
     "migrate": "prisma migrate dev",
     "studio": "prisma studio"
   },
@@ -18,7 +19,7 @@
   "author": "AI Dev Team",
   "license": "MIT",
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.4.3",
+    "@anthropic-ai/sdk": "^0.80.0",
     "@prisma/client": "^5.1.1",
     "axios": "^1.5.0",
     "chalk": "^4.1.2",

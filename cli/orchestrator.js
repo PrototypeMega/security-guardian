@@ -1,8 +1,10 @@
 require('dotenv').config();
 const chalk = require('chalk');
 const { PrismaClient } = require('@prisma/client');
+const OnboardingCopilotAgent = require('../backend/agents/onboarding-copilot');
 
 const prisma = new PrismaClient();
+const agent = new OnboardingCopilotAgent();
 
 async function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -10,7 +12,7 @@ async function sleep(ms) {
 
 async function processEvent(event) {
   console.log(chalk.blue(`\n📦 Processing event ${event.id}...`));
-  
+
   try {
     // Update status to processing
     await prisma.event.update({
@@ -18,15 +20,25 @@ async function processEvent(event) {
       data: { status: 'processing' }
     });
 
-    // For now, just simulate processing
-    // In Day 2, this will call the actual agent
+    // Execute the agent
     console.log(chalk.cyan(`   Event type: ${event.event_type}`));
-    console.log(chalk.cyan(`   Project ID: ${event.project_id}`));
-    
-    // Simulate agent work
-    await sleep(2000);
+    const payload = JSON.parse(event.payload);
+    console.log(chalk.cyan(`   Project ID: ${payload.project_id || event.project_id}`));
 
-    // Mark as complete
+    // Call the Onboarding Copilot Agent
+    const result = await agent.execute(event, prisma);
+
+    // Create agent run record
+    await prisma.agentRun.create({
+      data: {
+        event_id: event.id,
+        agent_name: agent.name,
+        status: 'complete',
+        output: JSON.stringify(result)
+      }
+    });
+
+    // Mark event as complete
     await prisma.event.update({
       where: { id: event.id },
       data: { status: 'complete' }
@@ -36,16 +48,25 @@ async function processEvent(event) {
 
   } catch (error) {
     console.error(chalk.red(`✗ Error processing event ${event.id}: ${error.message}`));
-    
+
+    // Create failed agent run record
+    try {
+      await prisma.agentRun.create({
+        data: {
+          event_id: event.id,
+          agent_name: agent.name,
+          status: 'failed',
+          error_message: error.message
+        }
+      });
+    } catch (e) {
+      console.error(chalk.red(`Could not log agent run: ${e.message}`));
+    }
+
+    // Update event status
     await prisma.event.update({
       where: { id: event.id },
-      data: { 
-        status: 'failed',
-        payload: JSON.stringify({
-          ...JSON.parse(event.payload),
-          error: error.message
-        })
-      }
+      data: { status: 'failed' }
     });
   }
 }
