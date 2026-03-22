@@ -1,6 +1,7 @@
 require('dotenv').config();
 const { PrismaClient } = require('@prisma/client');
 const chalk = require('chalk');
+const OnboardingCopilot = require('../backend/agents/onboarding-copilot');
 
 const prisma = new PrismaClient();
 
@@ -83,12 +84,15 @@ class Orchestrator {
       let agentResult;
       if (event.event_type === 'push') {
         console.log(chalk.gray(`    → Dispatching to onboarding-copilot...`));
-        // Placeholder: In Phase 2, we'll implement the actual agent
-        agentResult = {
-          success: true,
-          agent: 'onboarding-copilot',
-          message: 'Agent would process this event'
-        };
+
+        // Initialize agent
+        const agent = new OnboardingCopilot(
+          process.env.GITLAB_API_TOKEN,
+          process.env.CLAUDE_API_KEY
+        );
+
+        // Execute agent
+        agentResult = await agent.execute(event, prisma);
       } else {
         agentResult = {
           success: false,
