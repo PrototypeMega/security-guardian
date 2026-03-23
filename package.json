@@ -5,6 +5,9 @@
   "main": "backend/server.js",
   "scripts": {
     "dev": "node backend/server.js",
+    "mcp": "node backend/mcp-server.js",
+    "dashboard": "node dashboard-server.js",
+    "start": "concurrently \"npm run mcp\" \"npm run dashboard\"",
     "cli": "node cli/orchestrator.js",
     "test": "node backend/test-fixture.js",
     "demo": "node backend/webhook-simulator.js",
@@ -25,7 +28,8 @@
     "axios": "^1.5.0",
     "chalk": "^4.1.2",
     "dotenv": "^16.0.3",
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "puppeteer": "^24.40.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1",

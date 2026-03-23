@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Dev Team - Automate Your Development Workflow</title>
+    <title>AI Dev Team - Browser-Enabled Agents for Claude Code</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -17,8 +17,8 @@
             <ul class="nav-menu">
                 <li><a href="#features">Features</a></li>
                 <li><a href="#how-it-works">How It Works</a></li>
-                <li><a href="#use-cases">Use Cases</a></li>
-                <li><a href="#cta" class="nav-cta">Request Access</a></li>
+                <li><a href="#agents">Agents</a></li>
+                <li><a href="#getting-started" class="nav-cta">Get Started</a></li>
             </ul>
         </div>
     </nav>
@@ -26,10 +26,13 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
-            <h1>Automate Your Dev Team</h1>
-            <p>AI Agents for Onboarding, Testing, Security, and Planning</p>
-            <p class="hero-subtext">Four autonomous agents that work directly in GitLab to save your team 10+ hours per week</p>
-            <a href="#cta" class="btn btn-primary">See It In Action</a>
+            <h1>Browser-Enabled AI Agents for Claude Code</h1>
+            <p class="hero-subtitle">Control the browser with AI. No coding required.</p>
+            <p class="hero-subtext">Four intelligent agents with full browser automation. Test visually. Deploy instantly. Integrate with Claude Code.</p>
+            <div class="hero-buttons">
+                <a href="#getting-started" class="btn btn-primary">Get Started Free</a>
+                <a href="#how-it-works" class="btn btn-secondary">Learn How It Works</a>
+            </div>
         </div>
         <div class="hero-visual">
             <div class="agent-icons">
@@ -41,102 +44,108 @@
         </div>
     </section>
 
-    <!-- Problem Section -->
-    <section class="problem">
+    <!-- Features Section -->
+    <section id="features" class="features">
         <div class="container">
-            <h2>The Problem</h2>
-            <p class="section-subtitle">Development teams spend 30% of time on non-coding tasks</p>
+            <h2>Powerful Browser Automation</h2>
+            <p class="section-subtitle">Your agents can now see and interact with the web</p>
 
-            <div class="problem-cards">
-                <div class="problem-card">
-                    <div class="problem-icon">👥</div>
-                    <h3>Slow Onboarding</h3>
-                    <p>New contributors lose days learning repository structure and tech stack</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <span class="feature-icon">🌐</span>
+                    <h3>Navigate & Control</h3>
+                    <p>Agents can navigate to URLs, click elements, type text, and interact with web pages just like a real user</p>
                 </div>
-                <div class="problem-card">
-                    <div class="problem-icon">❌</div>
-                    <h3>Test Coverage Gaps</h3>
-                    <p>Hard to ensure comprehensive testing on every change</p>
+                <div class="feature-card">
+                    <span class="feature-icon">📸</span>
+                    <h3>See What's There</h3>
+                    <p>Take screenshots, extract text, and gather real-world context. Agents make better decisions with actual data</p>
                 </div>
-                <div class="problem-card">
-                    <div class="problem-icon">🔐</div>
-                    <h3>Security Risks</h3>
-                    <p>Vulnerabilities slip through reviews, costly fixes after production</p>
+                <div class="feature-card">
+                    <span class="feature-icon">⚙️</span>
+                    <h3>No Coding Required</h3>
+                    <p>Visual editor to add browser steps. Forms, not code. Anyone can create powerful agents</p>
                 </div>
-                <div class="problem-card">
-                    <div class="problem-icon">📅</div>
-                    <h3>Feature Planning Delays</h3>
-                    <p>Converting requirements to execution plans takes hours of manual work</p>
+                <div class="feature-card">
+                    <span class="feature-icon">💡</span>
+                    <h3>Intelligent Reasoning</h3>
+                    <p>Claude-powered agents that combine browser data with deep reasoning for smarter automation</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">⚡</span>
+                    <h3>Test in Real-Time</h3>
+                    <p>Dashboard UI shows step-by-step execution with screenshots. Debug and refine before deployment</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🔗</span>
+                    <h3>Claude Code Integration</h3>
+                    <p>One command to start. Use agents directly in your IDE with simple mentions</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Solution: Agent Cards -->
-    <section id="features" class="solution">
+    <!-- Agents Section -->
+    <section id="agents" class="agents">
         <div class="container">
-            <h2>The Solution: 4 Intelligent Agents</h2>
-            <p class="section-subtitle">Autonomous agents that integrate directly into your GitLab workflow</p>
+            <h2>4 Specialized Agents</h2>
+            <p class="section-subtitle">Each designed for a specific development task</p>
 
             <div class="agents-grid">
-                <!-- Agent 1 -->
                 <div class="agent-card">
                     <div class="agent-header">
                         <span class="agent-icon">👥</span>
                         <h3>Onboarding Copilot</h3>
                     </div>
-                    <p class="agent-desc">Helps new contributors ramp up fast</p>
+                    <p class="agent-desc">Help new contributors ramp up fast</p>
                     <ul class="agent-features">
-                        <li>✓ Repository summary & structure</li>
-                        <li>✓ First-day checklist</li>
-                        <li>✓ 3 starter tasks</li>
+                        <li>✓ Repository analysis & context</li>
+                        <li>✓ Personalized onboarding checklist</li>
+                        <li>✓ 3 starter tasks recommended</li>
+                        <li>✓ First-day success path</li>
                     </ul>
-                    <p class="agent-example"><strong>Example:</strong> Mention @Onboarding-Copilot → Get onboarding guide instantly</p>
                 </div>
 
-                <!-- Agent 2 -->
                 <div class="agent-card">
                     <div class="agent-header">
                         <span class="agent-icon">📋</span>
                         <h3>Feature Planner</h3>
                     </div>
-                    <p class="agent-desc">Converts requests into execution plans</p>
+                    <p class="agent-desc">Convert requests into execution plans</p>
                     <ul class="agent-features">
-                        <li>✓ Implementation steps</li>
-                        <li>✓ Acceptance criteria</li>
-                        <li>✓ Test recommendations</li>
+                        <li>✓ Detailed implementation steps</li>
+                        <li>✓ Affected areas identified</li>
+                        <li>✓ Acceptance criteria defined</li>
+                        <li>✓ Test plan included</li>
                     </ul>
-                    <p class="agent-example"><strong>Example:</strong> Post feature request → Get complete implementation plan</p>
                 </div>
 
-                <!-- Agent 3 -->
                 <div class="agent-card">
                     <div class="agent-header">
                         <span class="agent-icon">✅</span>
                         <h3>Test Generator</h3>
                     </div>
-                    <p class="agent-desc">Identifies missing tests automatically</p>
+                    <p class="agent-desc">Identify missing tests automatically</p>
                     <ul class="agent-features">
-                        <li>✓ Test coverage analysis</li>
-                        <li>✓ Edge case identification</li>
+                        <li>✓ Change impact analysis</li>
+                        <li>✓ Test coverage gaps found</li>
+                        <li>✓ Edge cases identified</li>
                         <li>✓ Concrete test suggestions</li>
                     </ul>
-                    <p class="agent-example"><strong>Example:</strong> Assign as MR reviewer → Get test recommendations</p>
                 </div>
 
-                <!-- Agent 4 -->
                 <div class="agent-card">
                     <div class="agent-header">
                         <span class="agent-icon">🔒</span>
                         <h3>Security Patch Agent</h3>
                     </div>
-                    <p class="agent-desc">Reviews vulns and proposes safe fixes</p>
+                    <p class="agent-desc">Review vulnerabilities & propose fixes</p>
                     <ul class="agent-features">
                         <li>✓ Severity assessment</li>
-                        <li>✓ Remediation options</li>
-                        <li>✓ Low-risk changes</li>
+                        <li>✓ Safe remediation proposed</li>
+                        <li>✓ Low-risk approach</li>
+                        <li>✓ Validation steps provided</li>
                     </ul>
-                    <p class="agent-example"><strong>Example:</strong> Security scan finding → Get fix recommendation</p>
                 </div>
             </div>
         </div>
@@ -146,44 +155,111 @@
     <section id="how-it-works" class="how-it-works">
         <div class="container">
             <h2>How It Works</h2>
-            <p class="section-subtitle">Works directly in GitLab — no new tools, no context switching</p>
+            <p class="section-subtitle">Three simple steps to powerful automation</p>
 
             <div class="workflow">
                 <div class="workflow-step">
                     <div class="step-number">1</div>
-                    <h3>Mention Agent</h3>
-                    <p>In any issue or MR, mention an agent by name</p>
+                    <h3>Design</h3>
+                    <p>Use the visual dashboard to create agents. Add browser steps with simple forms—no coding required</p>
                 </div>
                 <div class="workflow-arrow">→</div>
                 <div class="workflow-step">
                     <div class="step-number">2</div>
-                    <h3>Agent Processes</h3>
-                    <p>Agent analyzes context and generates response</p>
+                    <h3>Test</h3>
+                    <p>See your agent in action. Real browser automation with step-by-step logs and screenshots</p>
                 </div>
                 <div class="workflow-arrow">→</div>
                 <div class="workflow-step">
                     <div class="step-number">3</div>
-                    <h3>Result Posted</h3>
-                    <p>Comments automatically with actionable guidance</p>
+                    <h3>Deploy</h3>
+                    <p>Copy one line of code. Use in Claude Code. Your agents are now part of your workflow</p>
                 </div>
             </div>
 
-            <div class="flows-section">
-                <h3>Pre-Built Flows</h3>
-                <div class="flows-grid">
-                    <div class="flow-card">
-                        <h4>New Contributor Onboarding</h4>
-                        <p>Mention flow → Get complete onboarding in minutes</p>
-                    </div>
-                    <div class="flow-card">
-                        <h4>Feature to Delivery</h4>
-                        <p>Mention flow → Get implementation plan + tests</p>
-                    </div>
-                    <div class="flow-card">
-                        <h4>Secure MR Review</h4>
-                        <p>Assign flow as reviewer → Get test + security review</p>
-                    </div>
+            <div class="workflow-example">
+                <h3>Example: Feature Planner with Browser Context</h3>
+                <div class="example-box">
+                    <p><strong>Without Browser:</strong> Agent reads feature request → Creates plan</p>
+                    <p style="margin-top: 1rem;"><strong>With Browser:</strong></p>
+                    <p style="margin-left: 1.5rem;">Agent reads feature request → <br/>
+                    Navigates to design system → <br/>
+                    Screenshots current patterns → <br/>
+                    Extracts design guidelines → <br/>
+                    Creates informed plan with design alignment</p>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Cases -->
+    <section class="use-cases">
+        <div class="container">
+            <h2>Real-World Use Cases</h2>
+            <p class="section-subtitle">How teams use AI Dev Team</p>
+
+            <div class="use-cases-grid">
+                <div class="use-case-card">
+                    <h3>🚀 Faster Onboarding</h3>
+                    <p>New contributors get personalized onboarding in minutes, not days. Reduced context switching, faster productivity</p>
+                </div>
+                <div class="use-case-card">
+                    <h3>📐 Better Planning</h3>
+                    <p>Feature requests become detailed implementation plans. Developers know exactly what to build before coding</p>
+                </div>
+                <div class="use-case-card">
+                    <h3>🧪 Complete Testing</h3>
+                    <p>No more missed tests. Agents identify gaps and suggest concrete test cases for every change</p>
+                </div>
+                <div class="use-case-card">
+                    <h3>🔐 Proactive Security</h3>
+                    <p>Vulnerabilities caught early with automated review and safe remediation proposals</p>
+                </div>
+                <div class="use-case-card">
+                    <h3>⚡ Time Savings</h3>
+                    <p>10+ hours per developer per week freed up from non-coding tasks for deep work</p>
+                </div>
+                <div class="use-case-card">
+                    <h3>🧠 Smarter Decisions</h3>
+                    <p>Agents gather real-world context before reasoning, leading to better recommendations</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Getting Started -->
+    <section id="getting-started" class="getting-started">
+        <div class="container">
+            <h2>Get Started in 5 Minutes</h2>
+            <p class="section-subtitle">Everything you need is ready to use</p>
+
+            <div class="setup-steps">
+                <div class="setup-step">
+                    <div class="step-num">1</div>
+                    <h4>Install</h4>
+                    <code>npm install</code>
+                </div>
+                <div class="setup-step">
+                    <div class="step-num">2</div>
+                    <h4>Configure</h4>
+                    <code>CLAUDE_API_KEY=sk-ant-...</code>
+                </div>
+                <div class="setup-step">
+                    <div class="step-num">3</div>
+                    <h4>Start</h4>
+                    <code>npm run mcp</code>
+                </div>
+                <div class="setup-step">
+                    <div class="step-num">4</div>
+                    <h4>Dashboard</h4>
+                    <code>localhost:3002</code>
+                </div>
+            </div>
+
+            <div class="cta-box">
+                <h3>Ready to Automate?</h3>
+                <p>Open the dashboard, select an agent, and test it in real-time. Everything works out of the box.</p>
+                <a href="http://localhost:3002" class="btn btn-primary" target="_blank">Open Dashboard →</a>
             </div>
         </div>
     </section>
@@ -194,8 +270,8 @@
             <h2>Impact By The Numbers</h2>
             <div class="benefits-grid">
                 <div class="benefit-card">
-                    <h3>10+ hours</h3>
-                    <p>Saved per developer per week on non-coding tasks</p>
+                    <h3>10+</h3>
+                    <p>Hours saved per developer per week</p>
                 </div>
                 <div class="benefit-card">
                     <h3>50%</h3>
@@ -203,95 +279,78 @@
                 </div>
                 <div class="benefit-card">
                     <h3>80%</h3>
-                    <p>More test coverage identified automatically</p>
+                    <p>More test coverage identified</p>
                 </div>
                 <div class="benefit-card">
                     <h3>100%</h3>
-                    <p>Security-reviewed every MR</p>
+                    <p>Security-reviewed every change</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Use Cases / Testimonials -->
-    <section id="use-cases" class="use-cases">
+    <!-- Live Analytics -->
+    <section id="site-stats" class="live-stats">
         <div class="container">
-            <h2>Real-World Use Cases</h2>
-            <p class="section-subtitle">How different teams benefit from AI Dev Team</p>
+            <h2>Community & Usage</h2>
+            <p class="section-subtitle">See how developers are using AI Dev Team</p>
 
-            <div class="testimonials-grid">
-                <div class="testimonial-card">
-                    <div class="testimonial-header">
-                        <div class="testimonial-avatar">EM</div>
-                        <div>
-                            <h4>Engineering Manager</h4>
-                            <p class="role">Growing Engineering Team</p>
-                        </div>
-                    </div>
-                    <blockquote>"Our onboarding time dropped from 2 weeks to 2 days. New team members are productive immediately."</blockquote>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="site-visits-counter">0</div>
+                    <div class="stat-label">Site Visitors</div>
                 </div>
-
-                <div class="testimonial-card">
-                    <div class="testimonial-header">
-                        <div class="testimonial-avatar">SL</div>
-                        <div>
-                            <h4>Security Lead</h4>
-                            <p class="role">Enterprise SaaS</p>
-                        </div>
-                    </div>
-                    <blockquote>"We catch vulnerabilities before they make it to production. Security reviews are now data-driven, not opinion-driven."</blockquote>
+                <div class="stat-card">
+                    <div class="stat-number" id="total-agent-interactions">0</div>
+                    <div class="stat-label">Agent Interactions</div>
                 </div>
-
-                <div class="testimonial-card">
-                    <div class="testimonial-header">
-                        <div class="testimonial-avatar">TL</div>
-                        <div>
-                            <h4>Tech Lead</h4>
-                            <p class="role">Scaling Startup</p>
-                        </div>
-                    </div>
-                    <blockquote>"Test coverage is enforced automatically. Code quality is higher. Developers spend more time on hard problems, not manual testing."</blockquote>
+                <div class="stat-card">
+                    <div class="stat-number" id="dashboard-clicks-counter">0</div>
+                    <div class="stat-label">Dashboard Accessed</div>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- Pricing / Availability -->
-    <section class="pricing">
-        <div class="container">
-            <h2>Built on GitLab Duo</h2>
-            <div class="pricing-card">
-                <h3>Available Now</h3>
-                <p>AI Dev Team runs on GitLab Duo Agent Platform</p>
-                <p class="pricing-detail">Available for GitLab Premium+ customers</p>
-                <p class="pricing-detail">Enable agents in your project, start automating today</p>
-                <a href="#cta" class="btn btn-primary">Request Early Access</a>
+            <div class="agent-stats-section">
+                <h3>Agent Usage Stats</h3>
+                <div class="agent-stats-grid">
+                    <div class="agent-stat-card">
+                        <div class="agent-stat-icon">👥</div>
+                        <div class="agent-stat-name">Onboarding Copilot</div>
+                        <div class="agent-stat-count" id="onboarding-copilot-counter">0</div>
+                        <div class="agent-stat-label">interactions</div>
+                    </div>
+                    <div class="agent-stat-card">
+                        <div class="agent-stat-icon">📋</div>
+                        <div class="agent-stat-name">Feature Planner</div>
+                        <div class="agent-stat-count" id="feature-planner-counter">0</div>
+                        <div class="agent-stat-label">interactions</div>
+                    </div>
+                    <div class="agent-stat-card">
+                        <div class="agent-stat-icon">✅</div>
+                        <div class="agent-stat-name">Test Generator</div>
+                        <div class="agent-stat-count" id="test-generator-counter">0</div>
+                        <div class="agent-stat-label">interactions</div>
+                    </div>
+                    <div class="agent-stat-card">
+                        <div class="agent-stat-icon">🔒</div>
+                        <div class="agent-stat-name">Security Patch Agent</div>
+                        <div class="agent-stat-count" id="security-patch-agent-counter">0</div>
+                        <div class="agent-stat-label">interactions</div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- CTA Section -->
-    <section id="cta" class="cta">
+    <section class="final-cta">
         <div class="container">
-            <h2>Get Started With AI Dev Team</h2>
-            <p class="section-subtitle">Sign up to be notified when AI Dev Team is available for your organization</p>
-
-            <form id="lead-form" class="email-form">
-                <div class="form-group">
-                    <input type="text" id="name" name="name" placeholder="Your Name" required>
-                </div>
-                <div class="form-group">
-                    <input type="email" id="email" name="email" placeholder="your@email.com" required>
-                </div>
-                <div class="form-group">
-                    <input type="text" id="company" name="company" placeholder="Company (optional)">
-                </div>
-                <button type="submit" class="btn btn-primary btn-large">Request Early Access</button>
-            </form>
-
-            <div id="form-message" class="form-message"></div>
-
-            <p class="form-note">We'll send you updates about AI Dev Team and how to enable it in your GitLab project.</p>
+            <h2>Build Smarter. Ship Faster.</h2>
+            <p>AI Dev Team is ready. Your agents are ready. Let them work.</p>
+            <div class="cta-buttons">
+                <a href="http://localhost:3002" class="btn btn-primary btn-large" target="_blank">Try Dashboard Now</a>
+                <a href="https://github.com/yourusername/ai-dev-team-labs" class="btn btn-secondary btn-large" target="_blank">View on GitHub</a>
+            </div>
         </div>
     </section>
 
@@ -301,26 +360,27 @@
             <div class="footer-content">
                 <div class="footer-section">
                     <h4>AI Dev Team</h4>
-                    <p>Automating software delivery workflows on GitLab</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Links</h4>
-                    <ul>
-                        <li><a href="https://gitlab.com">GitLab</a></li>
-                        <li><a href="https://gitlab.com/features/duo">GitLab Duo</a></li>
-                        <li><a href="#features">Agents</a></li>
-                    </ul>
+                    <p>Browser-enabled agents for Claude Code. Automate your development workflow.</p>
                 </div>
                 <div class="footer-section">
                     <h4>Resources</h4>
                     <ul>
-                        <li><a href="https://docs.gitlab.com/ee/user/ai_features.html">Documentation</a></li>
-                        <li><a href="https://about.gitlab.com">About GitLab</a></li>
+                        <li><a href="http://localhost:3002" target="_blank">Dashboard</a></li>
+                        <li><a href="https://github.com/yourusername/ai-dev-team-labs" target="_blank">GitHub</a></li>
+                        <li><a href="https://github.com/yourusername/ai-dev-team-labs#readme" target="_blank">Documentation</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Technology</h4>
+                    <ul>
+                        <li><a href="https://claude.ai" target="_blank">Claude AI</a></li>
+                        <li><a href="https://nodejs.org" target="_blank">Node.js</a></li>
+                        <li><a href="https://github.com/puppeteer/puppeteer" target="_blank">Puppeteer</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2026 AI Dev Team on GitLab. All rights reserved.</p>
+                <p>&copy; 2026 AI Dev Team. Open source and free.</p>
             </div>
         </div>
     </footer>

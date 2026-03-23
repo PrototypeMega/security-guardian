@@ -1,147 +1,178 @@
-// Form Handling with Formspree Integration
+/**
+ * AI Dev Team Landing Page
+ * Analytics & Tracking
+ */
+
+// Analytics System
+class AnalyticsTracker {
+    constructor() {
+        this.storageKey = 'aiDevTeamAnalytics';
+        this.data = this.loadData();
+        this.initializeData();
+    }
+
+    loadData() {
+        const stored = localStorage.getItem(this.storageKey);
+        return stored ? JSON.parse(stored) : {};
+    }
+
+    initializeData() {
+        if (!this.data.totalViews) {
+            this.data.totalViews = 0;
+        }
+        if (!this.data.viewDate) {
+            this.data.viewDate = new Date().toISOString();
+        }
+        if (!this.data.agents) {
+            this.data.agents = {
+                'onboarding-copilot': { views: 0, clicks: 0 },
+                'feature-planner': { views: 0, clicks: 0 },
+                'test-generator': { views: 0, clicks: 0 },
+                'security-patch-agent': { views: 0, clicks: 0 }
+            };
+        }
+        if (!this.data.dashboardClicks) {
+            this.data.dashboardClicks = 0;
+        }
+    }
+
+    recordPageView() {
+        this.data.totalViews++;
+        this.saveData();
+    }
+
+    recordAgentInteraction(agentId, type = 'view') {
+        if (!this.data.agents[agentId]) {
+            this.data.agents[agentId] = { views: 0, clicks: 0 };
+        }
+        if (type === 'view') {
+            this.data.agents[agentId].views++;
+        } else if (type === 'click') {
+            this.data.agents[agentId].clicks++;
+        }
+        this.saveData();
+    }
+
+    recordDashboardClick() {
+        this.data.dashboardClicks++;
+        this.saveData();
+    }
+
+    saveData() {
+        localStorage.setItem(this.storageKey, JSON.stringify(this.data));
+    }
+
+    getData() {
+        return this.data;
+    }
+
+    getTotalAgentInteractions() {
+        let total = 0;
+        for (let agent in this.data.agents) {
+            total += this.data.agents[agent].views + this.data.agents[agent].clicks;
+        }
+        return total;
+    }
+}
+
+// Initialize analytics
+const analytics = new AnalyticsTracker();
+
+// Track page view on load
 document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('lead-form');
-    const formMessage = document.getElementById('form-message');
+    analytics.recordPageView();
+    updateAnalyticsDisplay();
+    setupEventListeners();
+});
 
-    if (form) {
-        form.addEventListener('submit', async function(e) {
+// Setup event listeners for tracking
+function setupEventListeners() {
+    // Track agent card interactions
+    document.querySelectorAll('.agent-card').forEach(card => {
+        const agentName = card.querySelector('h3')?.textContent.toLowerCase()
+            .replace(/\s+/g, '-')
+            .replace(/[^\w-]/g, '');
+
+        card.addEventListener('mouseenter', () => {
+            analytics.recordAgentInteraction(agentName, 'view');
+            updateAnalyticsDisplay();
+        });
+    });
+
+    // Track dashboard button clicks
+    document.querySelectorAll('a[href*="localhost:3002"], a[href*="dashboard"]').forEach(link => {
+        link.addEventListener('click', () => {
+            analytics.recordDashboardClick();
+            analytics.recordAgentInteraction('dashboard-access', 'click');
+            updateAnalyticsDisplay();
+        });
+    });
+
+    // Track "Get Started" button clicks
+    document.querySelectorAll('.btn-primary[href*="getting-started"]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
             e.preventDefault();
+            document.getElementById('getting-started')?.scrollIntoView({ behavior: 'smooth' });
+        });
+    });
 
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const company = document.getElementById('company').value;
-
-            // Validate email
-            if (!isValidEmail(email)) {
-                showMessage('Please enter a valid email address.', 'error');
-                return;
-            }
-
-            // Disable submit button
-            const submitButton = form.querySelector('button[type="submit"]');
-            submitButton.disabled = true;
-            submitButton.textContent = 'Submitting...';
-
-            try {
-                // Submit to GitHub Issues (no backend needed)
-                // This sends form data as a GitHub issue for easy tracking
-                await submitLeadViaGitHubIssue(name, email, company);
-
-                // Also save locally for demo
-                submitFormLocally(name, email, company);
-
-                // Success - clear form and show message
-                form.reset();
-                showMessage(
-                    '✓ Thanks for signing up! We\'ll be in touch soon.',
-                    'success'
-                );
-
-                // Reset button
-                setTimeout(() => {
-                    submitButton.disabled = false;
-                    submitButton.textContent = 'Request Early Access';
-                }, 3000);
-            } catch (error) {
-                console.error('Form submission error:', error);
-                // Still save locally even if GitHub fails
-                submitFormLocally(name, email, company);
-                showMessage('✓ Lead captured! (Check browser console)', 'success');
-                form.reset();
-                submitButton.disabled = false;
-                submitButton.textContent = 'Request Early Access';
+    // Track "Learn How It Works" button clicks
+    document.querySelectorAll('.btn-secondary[href*="how-it-works"], a[href="#how-it-works"]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            if (link.href && link.href.includes('#')) {
+                e.preventDefault();
+                document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
             }
         });
-    }
-});
-
-// Submit lead to GitHub Issues (serverless solution)
-async function submitLeadViaGitHubIssue(name, email, company) {
-    // Create issue title and body
-    const title = `Lead: ${name} (${email})`;
-    const body = `
-## New Lead
-
-**Name:** ${name}
-**Email:** ${email}
-**Company:** ${company || 'Not provided'}
-**Timestamp:** ${new Date().toISOString()}
-**Source:** AI Dev Team Landing Page
-
----
-*This issue was created automatically by the landing page form.*
-    `.trim();
-
-    // GitHub API endpoint
-    // Note: This requires GitHub token in localStorage for authentication
-    // For demo/hackathon, we just log to console
-    console.log('Lead submission:', { name, email, company });
-    console.log('Could be sent to GitHub Issues with proper authentication');
-
-    return Promise.resolve();
-}
-
-// Alternative: Local storage for demo
-function submitFormLocally(name, email, company) {
-    // Store in local storage for demo
-    let leads = JSON.parse(localStorage.getItem('aiDevTeamLeads') || '[]');
-    leads.push({
-        name: name,
-        email: email,
-        company: company,
-        timestamp: new Date().toISOString()
     });
-    localStorage.setItem('aiDevTeamLeads', JSON.stringify(leads));
-    console.log('Lead saved locally:', { name, email, company });
-    console.log('All leads:', leads);
-    console.log('View leads: localStorage.getItem("aiDevTeamLeads")');
+
+    // Smooth scrolling for all hash links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            const href = this.getAttribute('href');
+            if (href !== '#' && document.querySelector(href)) {
+                e.preventDefault();
+                document.querySelector(href).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
 }
 
-// Helper: Validate email format
-function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
+// Update analytics display on page
+function updateAnalyticsDisplay() {
+    const data = analytics.getData();
 
-// Helper: Show form message
-function showMessage(message, type) {
-    const formMessage = document.getElementById('form-message');
-    if (formMessage) {
-        formMessage.textContent = message;
-        formMessage.className = 'form-message ' + type;
+    // Update main analytics counter if it exists
+    const counterElement = document.getElementById('site-visits-counter');
+    if (counterElement) {
+        counterElement.textContent = data.totalViews.toLocaleString();
+    }
 
-        // Auto-clear success message after 5 seconds
-        if (type === 'success') {
-            setTimeout(() => {
-                formMessage.textContent = '';
-                formMessage.className = 'form-message';
-            }, 5000);
+    // Update individual agent counters
+    for (let agent in data.agents) {
+        const element = document.getElementById(`${agent}-counter`);
+        if (element) {
+            const count = data.agents[agent].views + data.agents[agent].clicks;
+            element.textContent = count;
         }
     }
-}
 
-// Smooth scrolling for navigation links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        const href = this.getAttribute('href');
-        if (href !== '#' && document.querySelector(href)) {
-            e.preventDefault();
-            document.querySelector(href).scrollIntoView({
-                behavior: 'smooth'
-            });
-        }
-    });
-});
+    // Update total agent interactions
+    const totalAgentElement = document.getElementById('total-agent-interactions');
+    if (totalAgentElement) {
+        totalAgentElement.textContent = analytics.getTotalAgentInteractions().toLocaleString();
+    }
 
-// Mobile menu toggle (if needed in future)
-function toggleMobileMenu() {
-    const navMenu = document.querySelector('.nav-menu');
-    if (navMenu) {
-        navMenu.classList.toggle('active');
+    // Update dashboard clicks
+    const dashboardElement = document.getElementById('dashboard-clicks-counter');
+    if (dashboardElement) {
+        dashboardElement.textContent = data.dashboardClicks.toLocaleString();
     }
 }
 
-// Analytics: Track section views (optional)
+// Section view tracking (Intersection Observer)
 const observerOptions = {
     threshold: 0.1,
     rootMargin: '0px 0px -100px 0px'
@@ -150,8 +181,11 @@ const observerOptions = {
 const observer = new IntersectionObserver(function(entries) {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
-            console.log('Viewed section:', entry.target.id || entry.target.tagName);
-            // Here you could send analytics events
+            const sectionId = entry.target.id;
+            if (sectionId && sectionId !== 'site-stats') {
+                // Track which sections are viewed
+                console.log('Viewed section:', sectionId);
+            }
         }
     });
 }, observerOptions);
@@ -160,21 +194,8 @@ document.querySelectorAll('section').forEach(section => {
     observer.observe(section);
 });
 
-// Form field validation on input
-const emailInput = document.getElementById('email');
-if (emailInput) {
-    emailInput.addEventListener('change', function() {
-        if (this.value && !isValidEmail(this.value)) {
-            this.style.borderColor = '#cb2431';
-        } else {
-            this.style.borderColor = '#ddd';
-        }
-    });
-}
+// Initialize display on load
+window.addEventListener('load', updateAnalyticsDisplay);
 
-console.log('AI Dev Team Landing Page loaded');
-console.log('To setup form submissions:');
-console.log('1. Create free account at formspree.io');
-console.log('2. Get your form ID');
-console.log('3. Replace "YOUR_FORM_ID" in script.js line with your actual form ID');
-console.log('4. Your form submissions will be emailed and stored');
+console.log('AI Dev Team Landing Page Analytics Loaded');
+console.log('View analytics: localStorage.getItem("aiDevTeamAnalytics")');

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Dev Team - Agent Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <h1>🤖 AI Dev Team - Agent Dashboard</h1>
+        <p class="subtitle">Browser-enabled agents for Claude Code</p>
+      </div>
+      <div class="header-actions">
+        <button id="connectBtn" class="btn btn-primary">Connect to MCP Server</button>
+        <span id="status" class="status disconnected">Disconnected</span>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Left Panel - Agent List -->
+      <section class="panel agents-panel">
+        <h2>Your 4 Agents</h2>
+        <div id="agentsList" class="agents-list">
+          <!-- Populated by JavaScript -->
+        </div>
+      </section>
+
+      <!-- Right Panel - Editor & Testing -->
+      <section class="panel editor-panel">
+        <div class="editor-header">
+          <h2 id="agentTitle">Select an agent</h2>
+          <p id="agentDesc" class="agent-description"></p>
+        </div>
+
+        <!-- Browser Steps Editor -->
+        <div class="section">
+          <h3>Browser Steps (Optional)</h3>
+          <p class="help-text">Add steps to gather information before the agent reasons. All steps are optional.</p>
+
+          <div id="stepsList" class="steps-list">
+            <!-- Populated dynamically -->
+          </div>
+
+          <div class="step-controls">
+            <button id="addStepBtn" class="btn btn-secondary" disabled>+ Add Step</button>
+            <button id="clearStepsBtn" class="btn btn-secondary" disabled>Clear All Steps</button>
+          </div>
+        </div>
+
+        <!-- Agent Input -->
+        <div class="section">
+          <h3>Agent Input</h3>
+          <textarea id="userInput" class="input-field" placeholder="Enter your request for the agent..." disabled></textarea>
+        </div>
+
+        <!-- Test Agent -->
+        <div class="section">
+          <h3>Test Agent</h3>
+          <button id="testBtn" class="btn btn-success" disabled>▶️ Test Agent</button>
+          <button id="stopBtn" class="btn btn-danger" style="display:none;">⏹️ Stop</button>
+        </div>
+
+        <!-- Results -->
+        <div class="section">
+          <h3>Results</h3>
+          <div id="results" class="results-box">
+            <p class="placeholder">Test results will appear here...</p>
+          </div>
+        </div>
+
+        <!-- Setup Instructions -->
+        <div class="section setup-section">
+          <h3>Use in Claude Code</h3>
+          <button id="setupBtn" class="btn btn-info" disabled>Copy Setup Instructions</button>
+          <div id="setupCode" class="code-box" style="display:none;">
+            <pre id="setupText"></pre>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>AI Dev Team Labs © 2026 | MCP Server: <span id="mcp-url">localhost:3001</span></p>
+    </footer>
+  </div>
+
+  <!-- Step Editor Modal -->
+  <div id="stepModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Add Browser Step</h3>
+        <button class="modal-close" onclick="closeStepModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <label>Action Type</label>
+        <select id="stepAction" onchange="onStepActionChange()">
+          <option value="">-- Select Action --</option>
+          <option value="navigate">Navigate to URL</option>
+          <option value="click">Click Element</option>
+          <option value="type">Type Text</option>
+          <option value="extractText">Extract Text</option>
+          <option value="screenshot">Take Screenshot</option>
+          <option value="waitFor">Wait for Element</option>
+          <option value="submit">Submit Form</option>
+        </select>
+
+        <!-- Action-specific fields -->
+        <div id="urlField" style="display:none;">
+          <label>URL</label>
+          <input type="text" id="stepUrl" placeholder="https://example.com">
+        </div>
+
+        <div id="selectorField" style="display:none;">
+          <label>CSS Selector</label>
+          <input type="text" id="stepSelector" placeholder="button.submit, input[name='email'], .card">
+        </div>
+
+        <div id="textField" style="display:none;">
+          <label>Text to Type</label>
+          <input type="text" id="stepText" placeholder="Enter text here">
+        </div>
+
+        <div id="timeoutField" style="display:none;">
+          <label>Timeout (ms)</label>
+          <input type="number" id="stepTimeout" placeholder="5000" value="5000">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeStepModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveStep()">Add Step</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

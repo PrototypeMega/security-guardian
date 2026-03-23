@@ -1,76 +1,95 @@
 # AI Dev Team Labs 🤖
 
-**GitLab Duo Agent Platform + Marketing Landing Page**
+**Browser-Enabled Agents for Claude Code**
 
-A complete multi-agent system for automating software development workflows on GitLab, plus a professional landing page for capturing early access interest.
+A complete AI agent platform that integrates with Claude Code, giving your 4 specialized agents full browser automation capabilities. Create agents visually, save them locally, and use them directly in your IDE.
 
 ---
 
 ## 📦 What's Included
 
-### 1. **4 Custom AI Agents** (GitLab Duo)
-- **Onboarding Copilot**: Helps new contributors ramp up fast
-- **Feature Planner**: Converts issues into execution plans
-- **Test Generator**: Identifies missing tests automatically
-- **Security Patch Agent**: Reviews vulnerabilities and proposes fixes
+### 1. **4 Intelligent AI Agents**
+- **Onboarding Copilot**: Helps new contributors ramp up fast with repo context, checklists, and starter tasks
+- **Feature Planner**: Converts requirements into execution-ready implementation plans
+- **Test Generator**: Identifies missing tests and recommends test strategies
+- **Security Patch Agent**: Reviews vulnerabilities and proposes low-risk fixes
 
-### 2. **3 Automation Flows** (GitLab Duo)
-- **New Contributor Onboarding** - Mention flow → Get onboarding checklist
-- **Feature to Delivery** - Feature issue → Implementation plan + test plan
-- **Secure MR Review** - Assign as reviewer → Get test + security review
+### 2. **Browser Automation Layer**
+- Full browser control via Puppeteer (navigate, click, type, screenshot, extract data)
+- Agents can browse web pages to gather context for better decisions
+- Real-time browser step testing in the dashboard
+- Example: Feature Planner can check design docs before creating implementation plan
 
-### 3. **Professional Landing Page**
-- Modern, responsive design (mobile + desktop)
-- 4 agent feature cards
-- How it works section with flow diagram
-- Email lead capture (saves to local storage)
-- Deployed on Netlify (1-click setup)
+### 3. **MCP Server** (Model Context Protocol)
+- Exposes all 4 agents + browser tools to Claude Code
+- Local execution (localhost:3001)
+- One-command startup (`npm run mcp`)
+- Drop-in integration with Claude Code
+
+### 4. **Interactive Dashboard**
+- Beautiful UI to test agents visually
+- Browser step editor (no coding required)
+- Real-time execution logs
+- Copy-paste setup instructions for Claude Code
+
+### 5. **Professional Landing Page**
+- Live at https://ai-dev-team-labs.netlify.app/
+- Showcases all 4 agents
+- Email lead capture
+- One-click setup guide
 
 ---
 
-## 🚀 Quick Start (15 Minutes)
+## 🚀 Quick Start (5 Minutes)
 
-### Step 1: Create 4 Agents in GitLab UI (8 min)
-
-1. Go to your GitLab project → **Automate** → **Agents** → **New Agent**
-2. Follow the system prompts in `QUICK_SETUP.md`
-3. Copy-paste each agent's system prompt
-
-**Agents:**
-- Onboarding Copilot
-- Feature Planner
-- Test Generator
-- Security Patch Agent
-
-### Step 2: Create 3 Flows in GitLab UI (6 min)
-
-1. Go to **Automate** → **Flows** → **New Flow**
-2. Create flows as described in `QUICK_SETUP.md`
-3. Wire them to call the agents
-
-**Flows:**
-- New Contributor Onboarding
-- Feature to Delivery
-- Secure MR Review
-
-### Step 3: Deploy Landing Page (Optional - 5 min)
-
+### Step 1: Install Dependencies
 ```bash
-# Push to GitHub
-git push origin master
-
-# Deploy to Netlify
-# Go to https://netlify.com → New site from Git
-# Select this repository → Deploy
-# Live in < 1 minute!
+npm install
 ```
 
-### Step 4: Test Everything (2 min)
-
+### Step 2: Set API Key
 ```bash
-# Test agents by mentioning them in a GitLab issue:
-@Onboarding-Copilot help me get started
-@Feature-Planner plan this feature
+# Create .env file
+CLAUDE_API_KEY=sk-ant-xxxxxxxxxxxxx   # Your Claude API key from https://console.anthropic.com
+```
+
+### Step 3: Start MCP Server
+```bash
+npm run mcp
+```
+See: `✓ MCP Server running on http://localhost:3001`
+
+### Step 4: Open Dashboard
+Go to **http://localhost:3001** in your browser
+
+### Step 5: Test an Agent
+1. Click "Onboarding Copilot"
+2. Enter: "Help me get started with this repository"
+3. Click "Test Agent"
+4. Watch the magic happen! 🎉
+
+---
+
+## 💡 Use Cases
+
+### With Browser Automation
+- **Feature Planner** checks design system docs before creating implementation plan
+- **Security Patch Agent** reviews CVE databases for context on vulnerability
+- **Test Generator** visits live app to understand current behavior before recommending tests
+- **Onboarding Copilot** checks GitHub README and repo structure in real-time
+
+### In Claude Code
+```
+@mcp http://localhost:3001
+@run_agent agent_id=feature-planner input="Add dark mode toggle"
+```
+
+With browser steps:
+```
+@run_agent agent_id=feature-planner input="Plan this feature" browser_steps=[
+  {"action": "navigate", "url": "https://docs.example.com/design"},
+  {"action": "screenshot"}
+]
 ```
 
 ---
