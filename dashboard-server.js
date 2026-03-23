@@ -1,7 +1,9 @@
 /**
  * Dashboard Server
- * Simple Express server to serve the dashboard UI
- * Connects to MCP server at localhost:3001
+ * Express server serving:
+ * - Landing page at http://localhost:3002/
+ * - Dashboard at http://localhost:3002/dashboard
+ * - Connects to MCP server at localhost:3001
  */
 
 const express = require('express');
@@ -11,21 +13,30 @@ const chalk = require('chalk');
 const app = express();
 const PORT = 3002;
 
-// Serve static files from dashboard folder
-app.use(express.static(path.join(__dirname, 'dashboard')));
+// Serve landing page as root
+app.use(express.static(path.join(__dirname, 'landing-page')));
 
-// Fallback to index.html for all routes (SPA)
-app.get('*', (req, res) => {
+// Serve dashboard on /dashboard route
+app.use('/dashboard', express.static(path.join(__dirname, 'dashboard')));
+
+// Dashboard SPA fallback (for dashboard navigation)
+app.get('/dashboard*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dashboard', 'index.html'));
+});
+
+// Landing page fallback (main SPA)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'landing-page', 'index.html'));
 });
 
 // Start server
 app.listen(PORT, () => {
   console.log(chalk.cyan.bold('\n🎨 AI Dev Team - Dashboard Server'));
   console.log(chalk.gray('================================\n'));
-  console.log(chalk.green(`✓ Dashboard running on http://localhost:${PORT}`));
+  console.log(chalk.green(`✓ Landing page at http://localhost:${PORT}`));
+  console.log(chalk.green(`✓ Dashboard at http://localhost:${PORT}/dashboard`));
   console.log(chalk.gray(`\nMake sure the MCP server is running:`));
   console.log(chalk.cyan(`  npm run mcp`));
-  console.log(chalk.gray(`\nThen open http://localhost:${PORT} in your browser`));
+  console.log(chalk.gray(`\nBoth servers needed for full functionality`));
   console.log(chalk.gray(`\nPress Ctrl+C to stop\n`));
 });

@@ -29,44 +29,58 @@ A complete AI agent platform that integrates with Claude Code, giving your 4 spe
 ### 4. **Interactive Dashboard**
 - Beautiful UI to test agents visually
 - Browser step editor (no coding required)
-- Real-time execution logs
+- Real-time execution logs with browser screenshots
 - Copy-paste setup instructions for Claude Code
+- Live analytics tracking (visitors, agent usage)
 
 ### 5. **Professional Landing Page**
 - Live at https://ai-dev-team-labs.netlify.app/
-- Showcases all 4 agents
-- Email lead capture
-- One-click setup guide
+- Showcases all 4 agents with working examples
+- Live usage statistics and analytics
+- Direct access to working dashboard
+- Clean, professional design
 
 ---
 
 ## 🚀 Quick Start (5 Minutes)
 
-### Step 1: Install Dependencies
+### Step 1: Clone & Install
 ```bash
+git clone https://github.com/yourusername/ai-dev-team-labs
+cd ai-dev-team-labs
 npm install
 ```
 
 ### Step 2: Set API Key
 ```bash
-# Create .env file
-CLAUDE_API_KEY=sk-ant-xxxxxxxxxxxxx   # Your Claude API key from https://console.anthropic.com
+# Create .env file in project root
+echo "CLAUDE_API_KEY=sk-ant-xxxxxxxxxxxxx" > .env
+# Paste your Claude API key from https://console.anthropic.com
 ```
 
-### Step 3: Start MCP Server
+### Step 3: Start All Servers
 ```bash
-npm run mcp
+npm start
 ```
-See: `✓ MCP Server running on http://localhost:3001`
 
-### Step 4: Open Dashboard
-Go to **http://localhost:3001** in your browser
+This starts both servers:
+- **MCP Server** (localhost:3001) - Claude Code integration
+- **Dashboard** (localhost:3002) - Web interface with landing page
+
+### Step 4: Access the Dashboard
+Open **http://localhost:3002** in your browser
+
+You'll see:
+- **Landing Page** - Overview and features showcase
+- **Live Analytics** - Real-time visitor and agent usage metrics
+- **Dashboard Link** - Click "Open Dashboard" to use agents
 
 ### Step 5: Test an Agent
-1. Click "Onboarding Copilot"
-2. Enter: "Help me get started with this repository"
-3. Click "Test Agent"
-4. Watch the magic happen! 🎉
+1. Click "Open Dashboard" (or navigate to http://localhost:3002/dashboard)
+2. Select "Onboarding Copilot" from the left panel
+3. Enter a request: "Help me understand this codebase"
+4. Click "Test Agent"
+5. Watch real-time browser automation and AI reasoning! 🎉
 
 ---
 
@@ -78,19 +92,29 @@ Go to **http://localhost:3001** in your browser
 - **Test Generator** visits live app to understand current behavior before recommending tests
 - **Onboarding Copilot** checks GitHub README and repo structure in real-time
 
-### In Claude Code
-```
-@mcp http://localhost:3001
-@run_agent agent_id=feature-planner input="Add dark mode toggle"
+### Using Agents in Claude Code
+
+1. **Set up MCP server** (already running on localhost:3001):
+```bash
+npm run mcp
 ```
 
-With browser steps:
+2. **In Claude Code, mention an agent**:
 ```
-@run_agent agent_id=feature-planner input="Plan this feature" browser_steps=[
-  {"action": "navigate", "url": "https://docs.example.com/design"},
-  {"action": "screenshot"}
-]
+Please use the Feature Planner agent to create an implementation plan
+for adding dark mode support to our application.
 ```
+
+3. **Or call directly**:
+```
+@run_agent feature-planner input="Add dark mode toggle to the app"
+```
+
+The agent will:
+- Analyze your request
+- Optionally browse web pages for context (if configured)
+- Use Claude API for intelligent reasoning
+- Return detailed implementation plan, test strategy, or security review
 
 ---
 

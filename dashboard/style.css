@@ -47,6 +47,24 @@ body {
   align-items: center;
 }
 
+.header-content {
+  flex: 1;
+}
+
+.logo-link {
+  display: inline-block;
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+  margin-bottom: 0.5rem;
+  transition: opacity 0.3s;
+}
+
+.logo-link:hover {
+  opacity: 0.8;
+}
+
 .header-content h1 {
   font-size: 1.875rem;
   margin-bottom: 0.25rem;
