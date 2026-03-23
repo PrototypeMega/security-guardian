@@ -9,22 +9,32 @@
 const express = require('express');
 const path = require('path');
 const chalk = require('chalk');
+const fs = require('fs');
 
 const app = express();
 const PORT = 3002;
 
-// Serve landing page as root
+// Middleware
+app.use(express.json());
 app.use(express.static(path.join(__dirname, 'landing-page')));
-
-// Serve dashboard on /dashboard route
 app.use('/dashboard', express.static(path.join(__dirname, 'dashboard')));
 
-// Dashboard SPA fallback (for dashboard navigation)
-app.get('/dashboard*', (req, res) => {
+// Routes
+// Landing page root
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'landing-page', 'index.html'));
+});
+
+// Dashboard pages
+app.get('/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'dashboard', 'index.html'));
 });
 
-// Landing page fallback (main SPA)
+app.get('/dashboard/*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dashboard', 'index.html'));
+});
+
+// Catch-all for landing page SPA
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'landing-page', 'index.html'));
 });
