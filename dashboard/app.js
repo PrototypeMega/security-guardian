@@ -12,8 +12,11 @@ let isConnected = false;
  * Initialize Dashboard
  */
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('Dashboard initializing...');
+  console.log('🚀 Dashboard initializing...');
+  console.log('📍 MCP Server URL:', MCP_SERVER_URL);
   setupEventListeners();
+  console.log('✅ Event listeners setup complete');
+  console.log('🔗 Attempting to connect to MCP server...');
   connectToServer();
 });
 
@@ -32,17 +35,27 @@ function setupEventListeners() {
  */
 async function connectToServer() {
   try {
-    console.log('Connecting to MCP server...');
+    console.log('Connecting to MCP server at:', MCP_SERVER_URL);
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+
     const response = await fetch(`${MCP_SERVER_URL}/mcp/tools/list`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({})
+      body: JSON.stringify({}),
+      signal: controller.signal
     });
 
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    clearTimeout(timeout);
+
+    if (!response.ok) {
+      console.error('HTTP Error:', response.status, response.statusText);
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
 
     const data = await response.json();
-    console.log('Connected to MCP server', data);
+    console.log('✅ Connected to MCP server', data);
 
     // Get agents list
     await fetchAgents();
@@ -50,9 +63,27 @@ async function connectToServer() {
     updateConnectionStatus(true);
 
   } catch (error) {
-    console.error('Connection failed:', error);
+    console.error('❌ Connection failed:', error.message);
     updateConnectionStatus(false);
-    alert(`Failed to connect to MCP server at ${MCP_SERVER_URL}\n\nMake sure the server is running:\nnpm run mcp`);
+
+    let errorMessage = `Failed to connect to MCP server at ${MCP_SERVER_URL}\n\n`;
+
+    if (error.name === 'AbortError') {
+      errorMessage += 'Error: Request timed out (5 seconds)\n\n';
+    } else if (error.message.includes('Failed to fetch')) {
+      errorMessage += 'Error: Network error - Cannot reach MCP server\n\n';
+      errorMessage += 'This could be due to:\n';
+      errorMessage += '1. MCP server not running\n';
+      errorMessage += '2. Firewall blocking localhost:3001\n';
+      errorMessage += '3. Browser security restrictions\n\n';
+    } else if (error.message.includes('HTTP')) {
+      errorMessage += `Error: ${error.message}\n\n`;
+    }
+
+    errorMessage += `Make sure the MCP server is running:\nnpm run mcp\n\n`;
+    errorMessage += `Details: ${error.message}`;
+
+    alert(errorMessage);
   }
 }
 
