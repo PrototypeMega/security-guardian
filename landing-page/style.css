@@ -974,6 +974,130 @@ h2 {
     }
 }
 
+/* Documentation Section */
+.documentation {
+    padding: 80px 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.documentation h2 {
+    color: #2d3748;
+    margin-bottom: 1rem;
+}
+
+.documentation .section-subtitle {
+    color: #4a5568;
+    margin-bottom: 3rem;
+}
+
+.docs-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+    margin-bottom: 4rem;
+}
+
+.docs-card {
+    background: white;
+    padding: 30px 25px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.docs-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 35px rgba(102, 126, 234, 0.2);
+}
+
+.docs-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.docs-card h3 {
+    color: #2d3748;
+    margin-bottom: 0.8rem;
+    font-size: 1.3rem;
+}
+
+.docs-card p {
+    color: #718096;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+.docs-link {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+    display: inline-block;
+}
+
+.docs-link:hover {
+    color: #764ba2;
+}
+
+.docs-features {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    margin-bottom: 3rem;
+}
+
+.docs-feature {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.feature-check {
+    font-size: 1.8rem;
+    color: #48bb78;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.docs-feature h4 {
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.docs-feature p {
+    color: #718096;
+    font-size: 0.95rem;
+}
+
+.docs-cta {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+@media (max-width: 1024px) {
+    .docs-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .documentation {
+        padding: 60px 20px;
+    }
+
+    .docs-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .docs-features {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (max-width: 480px) {
     .nav-menu {
         display: none;
@@ -1011,5 +1135,13 @@ h2 {
 
     .final-cta h2 {
         font-size: 1.5rem;
+    }
+
+    .docs-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .docs-features {
+        grid-template-columns: 1fr;
     }
 }

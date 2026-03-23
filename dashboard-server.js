@@ -16,13 +16,16 @@ const PORT = 3002;
 
 // Middleware
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'landing-page')));
-app.use('/dashboard', express.static(path.join(__dirname, 'dashboard')));
 
-// Routes
+// Routes (must come before static middleware to take priority)
 // Landing page root
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'landing-page', 'index.html'));
+});
+
+// Documentation pages
+app.get('/docs', (req, res) => {
+  res.sendFile(path.join(__dirname, 'landing-page', 'docs.html'));
 });
 
 // Dashboard pages
@@ -33,6 +36,10 @@ app.get('/dashboard', (req, res) => {
 app.get('/dashboard/*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dashboard', 'index.html'));
 });
+
+// Static file serving (after routes)
+app.use(express.static(path.join(__dirname, 'landing-page')));
+app.use('/dashboard', express.static(path.join(__dirname, 'dashboard')));
 
 // Catch-all for landing page SPA
 app.get('*', (req, res) => {
