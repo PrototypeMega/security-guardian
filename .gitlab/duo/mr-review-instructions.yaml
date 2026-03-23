@@ -1,0 +1,7 @@
+review_rules:
+  - "Identify missing tests for changed behavior"
+  - "Call out obvious security or dependency risks"
+  - "Prefer small, reviewable recommendations"
+  - "Keep comments concise and actionable"
+  - "Prioritize critical issues over style suggestions"
+  - "Suggest fixes, don't just report problems"
