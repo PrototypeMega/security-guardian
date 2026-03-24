@@ -1,0 +1,17 @@
+Security Guardian - Demo Presentation Frames
+Generated: 2026-03-24T06:14:54.306Z
+Total Frames: 7
+Resolution: 1920x1080
+Frame Duration: 3-4 seconds per slide (recommended)
+
+Slides:
+1. Title Card - 3s
+2. Problem Statement - 4s
+3. Architecture - 4s
+4. Vulnerability Examples - 4s
+5. MR Comment Output - 4s
+6. Key Features - 4s
+7. Call to Action - 3s
+
+To create video from these frames, use ffmpeg:
+ffmpeg -framerate 1/3 -pattern_type glob -i "slide-*.png" -c:v libx264 -pix_fmt yuv420p demo-video.mp4

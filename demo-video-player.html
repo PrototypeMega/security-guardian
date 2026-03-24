@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Guardian - Demo Video</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 40px;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 18px;
+            color: #cbd5e1;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            background: #000;
+        }
+
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .info {
+            background: rgba(59, 130, 246, 0.1);
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #60a5fa;
+        }
+
+        .info ul {
+            list-style: none;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        .info li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .info li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .cta {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px solid #10b981;
+            border-radius: 8px;
+        }
+
+        .cta p {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .cta a {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #10b981;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+
+        .cta a:hover {
+            background: #059669;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .header p {
+                font-size: 16px;
+            }
+
+            .info h2 {
+                font-size: 20px;
+            }
+
+            .info li {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔒 Security Guardian</h1>
+            <p>Autonomous AI Security Agent for GitLab - Demo Presentation</p>
+        </div>
+
+        <div class="video-container">
+            <video controls preload="metadata" controlsList="nodownload">
+                <source src="/demo-video.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+        <div class="info">
+            <h2>About This Demo</h2>
+            <ul>
+                <li>Duration: ~21 seconds</li>
+                <li>Resolution: 1920x1080 Full HD</li>
+                <li>Topics covered: Features, Architecture, Vulnerability Detection, Integration</li>
+                <li>Powered by Claude 3.5 Sonnet AI</li>
+                <li>Production-ready for GitLab Duo Agent Platform</li>
+            </ul>
+        </div>
+
+        <div class="cta">
+            <p>Ready to deploy Security Guardian to your GitLab?</p>
+            <a href="https://gitlab.com/ai-dev-team-labs/security-guardian" target="_blank">📖 View on GitLab</a>
+            <a href="https://github.com/PrototypeMega/security-guardian" target="_blank">🐙 View on GitHub</a>
+            <a href="https://devpost.com/software/security-guardian" target="_blank">🏆 DevPost Submission</a>
+        </div>
+    </div>
+
+    <script>
+        // Simple analytics tracking (optional)
+        console.log('Security Guardian Demo Video Loaded');
+        console.log('GitLab AI Hackathon 2026');
+    </script>
+</body>
+</html>

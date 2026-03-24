@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Guardian - Live Scan Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-size: 48px;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        .header p {
+            font-size: 18px;
+            color: #cbd5e1;
+        }
+        .scanner-box {
+            background: rgba(15, 23, 42, 0.8);
+            border: 2px solid #3b82f6;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        .scanner-title {
+            color: #60a5fa;
+            font-size: 16px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .scan-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            color: #10b981;
+        }
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #3b82f6;
+            border-radius: 50%;
+            border-top-color: #10b981;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .summary {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid #3b82f6;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 4px;
+        }
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        .summary-item:last-child {
+            margin-bottom: 0;
+            border-top: 1px solid rgba(59, 130, 246, 0.3);
+            padding-top: 10px;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #f3f4f6;
+        }
+        .critical { color: #ef4444; }
+        .high { color: #f97316; }
+        .findings {
+            display: grid;
+            gap: 20px;
+        }
+        .finding {
+            background: rgba(30, 41, 59, 0.5);
+            border-left: 4px solid #ef4444;
+            padding: 20px;
+            border-radius: 4px;
+        }
+        .finding.high {
+            border-left-color: #f97316;
+        }
+        .finding-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #fbbf24;
+        }
+        .finding-details {
+            font-size: 14px;
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+        .finding-label {
+            color: #60a5fa;
+            font-weight: bold;
+        }
+        .finding-value {
+            color: #e2e8f0;
+        }
+        .cta {
+            text-align: center;
+            margin-top: 40px;
+            padding: 30px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px solid #10b981;
+            border-radius: 8px;
+        }
+        .cta p {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        .cta a {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #10b981;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+        .cta a:hover {
+            background: #059669;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔒 Security Guardian</h1>
+            <p>Autonomous AI Security Agent for GitLab - Live Vulnerability Scan</p>
+        </div>
+
+        <div class="scanner-box">
+            <div class="scanner-title">SCANNING: examples/vulnerable-code.js</div>
+            <div class="scan-status">
+                <span class="spinner"></span>
+                <span>Security Guardian is scanning for vulnerabilities...</span>
+            </div>
+        </div>
+
+        <div class="summary">
+            <div class="summary-item">
+                <span>🔴 Critical Issues Found:</span>
+                <span class="critical">5</span>
+            </div>
+            <div class="summary-item">
+                <span>🟠 High Severity Issues:</span>
+                <span class="high">5</span>
+            </div>
+            <div class="summary-item">
+                <span>📊 Total Issues:</span>
+                <span>10 Vulnerabilities Detected</span>
+            </div>
+        </div>
+
+        <div class="findings">
+            <div class="finding">
+                <div class="finding-title">🔴 DATABASE_CONNECTION_STRING (Critical)</div>
+                <div class="finding-details">
+                    <div><span class="finding-label">Issue:</span> <span class="finding-value">Database connection string with embedded credentials detected</span></div>
+                    <div><span class="finding-label">File:</span> <span class="finding-value">examples/vulnerable-code.js:11</span></div>
+                    <div><span class="finding-label">Fix:</span> <span class="finding-value">Move to environment variable or GitLab CI/CD secret</span></div>
+                </div>
+            </div>
+
+            <div class="finding">
+                <div class="finding-title">🔴 API_KEY_GENERIC (Critical)</div>
+                <div class="finding-details">
+                    <div><span class="finding-label">Issue:</span> <span class="finding-value">Generic API key detected in code</span></div>
+                    <div><span class="finding-label">File:</span> <span class="finding-value">examples/vulnerable-code.js:10</span></div>
+                    <div><span class="finding-label">Fix:</span> <span class="finding-value">Move to environment variable or GitLab CI/CD secret</span></div>
+                </div>
+            </div>
+
+            <div class="finding">
+                <div class="finding-title">🔴 SQL_INJECTION_VULNERABLE (Critical)</div>
+                <div class="finding-details">
+                    <div><span class="finding-label">Issue:</span> <span class="finding-value">Potential SQL injection - unsanitized string interpolation</span></div>
+                    <div><span class="finding-label">File:</span> <span class="finding-value">examples/vulnerable-code.js:17</span></div>
+                    <div><span class="finding-label">Fix:</span> <span class="finding-value">Use parameterized queries with placeholders</span></div>
+                </div>
+            </div>
+
+            <div class="finding">
+                <div class="finding-title">🔴 EVAL_USAGE (Critical)</div>
+                <div class="finding-details">
+                    <div><span class="finding-label">Issue:</span> <span class="finding-value">eval() allows arbitrary code execution</span></div>
+                    <div><span class="finding-label">File:</span> <span class="finding-value">examples/vulnerable-code.js:35</span></div>
+                    <div><span class="finding-label">Fix:</span> <span class="finding-value">Use Function constructor or JSON.parse instead of eval()</span></div>
+                </div>
+            </div>
+
+            <div class="finding high">
+                <div class="finding-title">🟠 XSS_VULNERABLE (High)</div>
+                <div class="finding-details">
+                    <div><span class="finding-label">Issue:</span> <span class="finding-value">Potential XSS vulnerability - unsanitized HTML injection</span></div>
+                    <div><span class="finding-label">File:</span> <span class="finding-value">examples/vulnerable-code.js:44</span></div>
+                    <div><span class="finding-label">Fix:</span> <span class="finding-value">Use textContent for text or sanitize HTML with DOMPurify</span></div>
+                </div>
+            </div>
+
+            <div class="finding high">
+                <div class="finding-title">🟠 INSECURE_RANDOM (High)</div>
+                <div class="finding-details">
+                    <div><span class="finding-label">Issue:</span> <span class="finding-value">Math.random() is not cryptographically secure</span></div>
+                    <div><span class="finding-label">File:</span> <span class="finding-value">examples/vulnerable-code.js:26</span></div>
+                    <div><span class="finding-label">Fix:</span> <span class="finding-value">Use crypto.randomBytes() or crypto.getRandomValues()</span></div>
+                </div>
+            </div>
+
+            <div class="finding high">
+                <div class="finding-title">🟠 INSECURE_TLS (High)</div>
+                <div class="finding-details">
+                    <div><span class="finding-label">Issue:</span> <span class="finding-value">TLS certificate verification disabled</span></div>
+                    <div><span class="finding-label">File:</span> <span class="finding-value">examples/vulnerable-code.js:57</span></div>
+                    <div><span class="finding-label">Fix:</span> <span class="finding-value">Always verify TLS certificates in production</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cta">
+            <p>✅ Security Guardian automatically scans merge requests and generates fixes using Claude AI</p>
+            <p>Powered by GitLab Duo Agent Platform</p>
+            <a href="https://github.com/PrototypeMega/security-guardian" target="_blank">📖 View on GitHub</a>
+            <a href="https://gitlab.com/ai-dev-team-labs/security-guardian" target="_blank">🐙 View on GitLab</a>
+        </div>
+    </div>
+</body>
+</html>

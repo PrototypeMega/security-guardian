@@ -25,12 +25,12 @@
   "author": "Security Guardian Team",
   "license": "MIT",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.24.0",
     "axios": "^1.6.0",
-    "@anthropic-ai/sdk": "^0.24.0"
-  },
-  "devDependencies": {
-    "node:test": "latest",
-    "node:assert": "latest"
+    "ffmpeg-static": "^5.3.0",
+    "fluent-ffmpeg": "^2.1.3",
+    "gif-encoder": "^0.7.2",
+    "puppeteer": "^24.40.0"
   },
   "engines": {
     "node": ">=16.0.0"
