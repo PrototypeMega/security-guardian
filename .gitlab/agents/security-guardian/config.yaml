@@ -1,0 +1,207 @@
+# Security Guardian Workflow Configuration
+#
+# This file defines how the Security Guardian agent is triggered,
+# what workflows it executes, and how results are reported.
+
+version: "1"
+
+workflows:
+  # Primary workflow: Automated security review on merge requests
+  security_review:
+    name: "Automated Security Review"
+    description: "Scan MR for vulnerabilities and auto-fix critical issues"
+
+    # Trigger conditions
+    triggers:
+      merge_request:
+        on: [opened, updated]
+        branches:
+          - main
+          - master
+          - develop
+          - staging
+        exclude:
+          - dependabot/**
+          - renovate/**
+
+    # Workflow steps
+    steps:
+      # Step 1: Scan for vulnerabilities
+      - id: scan
+        agent: security-guardian
+        action: scan_vulnerabilities
+        inputs:
+          mr_diff: ${{ merge_request.diff }}
+          mr_branch: ${{ merge_request.source_branch }}
+          mr_title: ${{ merge_request.title }}
+          file_list: ${{ merge_request.changed_files }}
+          base_branch: ${{ merge_request.target_branch }}
+        timeout: 120
+        on_error: "report_findings"
+
+      # Step 2: Generate fixes if vulnerabilities found
+      - id: generate_fixes
+        agent: security-guardian
+        action: generate_fix
+        input_from: scan
+        condition: ${{ steps.scan.findings.length > 0 }}
+        inputs:
+          findings: ${{ steps.scan.findings }}
+          code_context: ${{ merge_request.diff_context }}
+          target_branch: ${{ merge_request.source_branch }}
+        parallel: true
+        timeout: 180
+
+      # Step 3: Create commit with fixes
+      - id: create_commit
+        agent: security-guardian
+        action: create_commit
+        input_from: generate_fixes
+        condition: ${{ steps.generate_fixes.fixes.length > 0 }}
+        inputs:
+          fixes: ${{ steps.generate_fixes.fixes }}
+          branch_name: ${{ merge_request.source_branch }}
+          commit_message: "security: Auto-fix vulnerabilities detected by Security Guardian"
+          author_name: "Security Guardian"
+          author_email: "security-guardian@gitlab.local"
+        timeout: 60
+
+      # Step 4: Post comprehensive comment
+      - id: post_comment
+        agent: security-guardian
+        action: post_mr_comment
+        input_from: scan, create_commit
+        inputs:
+          findings_summary: ${{ steps.scan.summary }}
+          fixes_applied: ${{ steps.create_commit.fixes }}
+          scan_duration: ${{ steps.scan.duration }}
+          commit_url: ${{ steps.create_commit.commit_url }}
+        timeout: 30
+
+      # Step 5: Add labels and reactions
+      - id: add_labels
+        action: gitlab_api
+        condition: ${{ steps.scan.findings.length > 0 }}
+        api_call: |
+          POST /projects/:id/merge_requests/:merge_request_iid/labels
+          labels:
+            - "security-review-completed"
+            - ${{ steps.scan.critical_count > 0 ? "critical-issues" : "low-risk" }}
+
+    # Result actions
+    result_actions:
+      on_success:
+        - notify: "Security review completed successfully"
+        - add_reaction: "✅"
+
+      on_failure:
+        - notify: "Security review encountered an error"
+        - add_reaction: "⚠️"
+        - add_label: "security-review-failed"
+
+    # Performance settings
+    performance:
+      timeout: 300
+      retry_failed_steps: false
+      cache_enabled: true
+      parallel_execution: true
+
+  # Secondary workflow: Manual security review request
+  manual_security_review:
+    name: "Manual Security Review"
+    description: "Triggered when developer requests security review via comment"
+
+    triggers:
+      comment:
+        on_text:
+          - "@security-guardian review"
+          - "@security-guardian scan"
+          - "@security-guardian check security"
+
+    steps:
+      - id: scan
+        agent: security-guardian
+        action: scan_vulnerabilities
+        inputs:
+          mr_diff: ${{ merge_request.diff }}
+          mr_branch: ${{ merge_request.source_branch }}
+
+      - id: post_comment
+        agent: security-guardian
+        action: post_mr_comment
+        input_from: scan
+
+# Notification settings
+notifications:
+  enabled: true
+  channels:
+    - slack:
+        enabled: true
+        on_critical: true
+        on_warning: false
+        webhook_url: ${{ env.SLACK_WEBHOOK_URL }}
+
+    - email:
+        enabled: true
+        on_critical: true
+        recipients:
+          - security-team@example.com
+
+  # Mentions in comments
+  mentions:
+    on_critical: ["@security-team", "@codeowners"]
+    on_warning: []
+
+# Agent configuration overrides
+agent_config:
+  security_guardian:
+    # Model settings
+    model: claude-3-5-sonnet
+    temperature: 0.3  # Lower temperature for consistent security decisions
+
+    # Tool settings
+    tools:
+      scan_vulnerabilities:
+        timeout: 120
+        cache_results: true
+
+      generate_fix:
+        timeout: 180
+        require_approval: false
+
+      create_commit:
+        timeout: 60
+        auto_push: true
+
+      post_mr_comment:
+        timeout: 30
+        include_summary: true
+        include_recommendations: true
+
+# Integration with other agents
+orchestration:
+  # After security review, trigger other agents
+  chain_with_agents:
+    - agent: code-quality-analyzer
+      condition: "security_review.completed"
+      pass_context: true
+
+    - agent: dependency-checker
+      condition: "security_review.findings.includes('vulnerable_dependency')"
+      pass_context: true
+
+# Access control
+access_control:
+  required_role: "developer"
+  allowed_groups:
+    - "security-team"
+    - "development"
+    - "devops"
+
+# Audit and logging
+audit:
+  enabled: true
+  log_level: "info"
+  retention_days: 90
+  log_all_findings: true
+  log_all_fixes: true

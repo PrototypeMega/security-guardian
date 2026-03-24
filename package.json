@@ -1,0 +1,46 @@
+{
+  "name": "security-guardian-agent",
+  "version": "1.0.0",
+  "description": "Autonomous Security Guardian Agent for GitLab Duo Agent Platform - Detects vulnerabilities and generates fixes using Claude AI",
+  "type": "module",
+  "main": "lib/vulnerability-scanner.js",
+  "scripts": {
+    "test": "node --test lib/**/*.test.js",
+    "scan": "node scripts/scan-diff.js",
+    "server": "node scripts/webhook-server.js",
+    "dev": "NODE_ENV=development node scripts/webhook-server.js"
+  },
+  "keywords": [
+    "gitlab",
+    "security",
+    "agent",
+    "ai",
+    "claude",
+    "vulnerability",
+    "scanner",
+    "fix-generator",
+    "mcp",
+    "duo-agent-platform"
+  ],
+  "author": "Security Guardian Team",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "@anthropic-ai/sdk": "^0.24.0"
+  },
+  "devDependencies": {
+    "node:test": "latest",
+    "node:assert": "latest"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/ai-dev-team-labs/security-guardian.git"
+  },
+  "bugs": {
+    "url": "https://gitlab.com/ai-dev-team-labs/security-guardian/-/issues"
+  },
+  "homepage": "https://gitlab.com/ai-dev-team-labs/security-guardian#readme"
+}
